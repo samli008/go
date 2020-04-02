@@ -1,0 +1,16 @@
+# install go download: https://studygolang.com/dl
+tar xzvf go1.14.1.linux-amd64.tar.gz
+mv go /usr/local/
+vi /etc/profile
+/usr/local/go/bin
+
+# first go
+vi liyang.go
+package main
+import "fmt"
+func main() {
+  fmt.Print("hello,liyang\n")
+}
+
+go run liyang.go
+go build liyang.go
