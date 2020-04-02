@@ -1,4 +1,4 @@
-# install go download: https://studygolang.com/dl
+# install go download https://studygolang.com/dl
 tar xzvf go1.14.1.linux-amd64.tar.gz
 mv go /usr/local/
 vi /etc/profile
