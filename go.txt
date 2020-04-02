@@ -3,6 +3,7 @@ tar xzvf go1.14.1.linux-amd64.tar.gz
 mv go /usr/local/
 vi /etc/profile
 /usr/local/go/bin
+go version
 
 # first go
 vi liyang.go
