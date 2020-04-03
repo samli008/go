@@ -32,3 +32,17 @@ func main() {
   fmt.Println("Hello", who)
 }
 
+# simple web server
+package main
+import (
+  "net/http"
+  "fmt"
+)
+
+func main() {
+  http.HandleFunc("/",handler)
+  http.ListenAndServe("0.0.0.0:80",nil)
+}
+func handler(w http.ResponseWriter, r *http.Request) {
+  fmt.Fprintf(w, "liyang web server!")
+}
