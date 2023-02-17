@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue_sqlite</title>
+    <script src="vue3.js"></script>
+    <script src="axios.js"></script>
+    <style>
+        /* .box{
+            display: flex;
+        } */
+        .inbox{
+            width: 100px;
+        }
+        .content li{
+            position: relative;
+            width: 600px;
+            height: 40px;
+            list-style: none;
+            line-height: 40px;
+            border: 1px solid blue
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div>
+                <input  class="inbox" type="text" v-model="name" placeholder="name">
+                <select style="width: 108px;" name="image" id="status" v-model="selected1">
+                    <option value="">image</option>
+                    <option :value="item.name" v-for="(item,index) in imageLists">{{item.name}}</option>
+                 </select>
+                 <select style="width: 108px;" name="network" id="status" v-model="selected2">
+                    <option value="">network</option>
+                    <option :value="item.name" v-for="(item,index) in nets">{{item.name}}</option>
+                 </select>
+                <input  class="inbox" type="text" v-model="ip" placeholder="ipaddress">
+                <button @click="create">create</button>
+                <button @click="load">reload</button>
+            </div>
+            <div>
+                <input  class="inbox" type="text" v-model="name1" placeholder="name">
+                <select style="width: 108px;" name="network" id="status" v-model="selected">
+                   <option value="">network</option>
+                   <option :value="item.name" v-for="(item,index) in nets">{{item.name}}</option>
+                </select>
+                <input  class="inbox" type="text" v-model="ip1" placeholder="start-ip">
+                <input  class="inbox" type="text" v-model="count" placeholder="count">
+                <button @click="createAuto">create</button>
+                <button @click="load">reload</button>
+            </div>
+        </div> 
+        <div style="text-align: center;">
+            <ul class="content">
+                <li>Name    Status     Image     Network     Ipaddress</li>
+                <li v-for="(list,index) in lists">
+                    {{list.name}}  {{list.status}}  {{list.image}} {{list.network}}  {{list.ip}} <button @click="del(list.id)">delete</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        Vue.createApp({
+            data(){
+                return {
+                    lists: [],
+                    imageLists: [],
+                    selected1: "",
+                    selected2: "",
+                    nets: [],
+                    selected: "",
+                    name: "",
+                    status: "",
+                    network: "",
+                    ip: "",
+                    image: "",
+                    name1: "",
+                    ip1: "",
+                    count: ""
+                }
+            },
+            created() {
+                this.load()
+            },
+            methods: {
+                load(){
+                    axios.get('/list').then(res=>{
+                        if(res.data.lists=="no"){
+                            alert("not found container")
+                        }else{
+                            //console.log(res.data.lists)
+                            this.lists=res.data.lists
+                            this.name=""
+                            this.status=""
+                            this.image=""
+                            this.network=""
+                            this.ip=""
+                            this.name1=""
+                            this.ip1=""
+                            this.count=""
+                            this.selected=""
+                            this.selected1=""
+                            this.selected2=""
+                        }
+                    })
+                    axios.get('/images').then(res=>{
+                        if(res.data.lists=="no"){
+                            alert("not found image")
+                        }else{
+                            this.imageLists=res.data.lists
+                        }
+                    })
+                    axios.get('/listNet').then(res=>{
+                        if(res.data.lists=="no"){
+                            alert("not found network")
+                        }else{
+                            this.nets=res.data.lists
+                        } 
+                    })
+                },
+                del(id){
+                    axios.delete("/del/"+id).then(res=>{
+                        alert(res.data.result)
+                        this.load()
+                    })
+                },
+                create(){
+                    if(this.name=="" || this.selected2=="" || this.selected1=="" || this.ip==""){
+                        alert("all fields not empty")
+                        this.name=""
+                        this.selected1=""
+                        this.selected2=""
+                        this.ip=""
+                    }else{
+                        axios.post('/create',{
+                            name: this.name,
+                            image: this.selected1,
+                            network: this.selected2,
+                            ip: this.ip,
+                        }).then(res=>{
+                            alert(res.data.message)
+                            this.load()
+                        })
+                    }  
+                },
+                createAuto(){
+                    if(this.name1=="" || this.ip1=="" || this.count=="" || this.selected==""){
+                        alert("all fields not empty")
+                        this.name1=""
+                        this.ip1=""
+                        this.count= ""
+                    }else{
+                        axios.post('/createAuto',{
+                            name: this.name1,
+                            image: "c7:nodejs",
+                            network: this.selected,
+                            ip: this.ip1,
+                            count: this.count
+                        }).then(res=>{
+                            alert(res.data.message)
+                            this.load()
+                        })
+                    }  
+                },
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>
