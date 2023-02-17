@@ -1,8 +1,8 @@
 package main
 
 import (
+	"docker/model"
 	"embed"
-	"liyang/model"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// menual add containers
 type docker1 struct {
 	Name    string `json:"name"`
 	Image   string `json:"image"`
@@ -18,6 +19,7 @@ type docker1 struct {
 	Ip      string `json:"ip"`
 }
 
+// auto add containers
 type docker2 struct {
 	Name    string `json:"name"`
 	Image   string `json:"image"`
