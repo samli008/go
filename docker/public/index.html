@@ -4,13 +4,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vue_sqlite</title>
+    <title>docker</title>
     <script src="vue3.js"></script>
     <script src="axios.js"></script>
     <style>
-        /* .box{
-            display: flex;
-        } */
+        #app {
+            width: 800px;
+            height: 500px;
+            background: #3C3E4F;
+            border-radius: 10px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .header-box{
+            justify-content: left;
+        }
+        .box{
+            top: 10px;
+        }
         .inbox{
             width: 100px;
         }
@@ -26,6 +41,9 @@
 </head>
 <body>
     <div id="app">
+        <div class="header-box">
+            <h2>docker operation</h2>
+        </div>
         <div class="box">
             <div>
                 <input  class="inbox" type="text" v-model="name" placeholder="name">
