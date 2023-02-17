@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue_sqlite</title>
+    <script src="vue3.js"></script>
+    <script src="axios.js"></script>
+    <style>
+        .box{
+            display: flex;
+        }
+        .inbox{
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div>
+                <input  class="inbox" type="text" v-model="fso" placeholder="FSO">
+                <input  class="inbox" type="text" v-model="machine" placeholder="机型">
+                <input  class="inbox" type="text" v-model="name" placeholder="姓名">
+                <input  class="inbox" type="text" v-model="phone" placeholder="电话">
+                <input  class="inbox" type="text" v-model="email" placeholder="邮箱">
+                <input  class="inbox" type="text" v-model="city" placeholder="城市">
+                <input  class="inbox" type="text" v-model="address" placeholder="地址">
+                <button @click="add">添加信息</button>
+                <button @click="update">更新信息</button>
+            </div>
+            <div>
+                <input  class="inbox" type="text" v-model="fso1" placeholder="FSO">
+                <button @click="search(fso1)">查询信息</button>
+                <button @click="modify(fso1)">修改信息</button>
+                <button @click="load">重置</button>
+            </div>
+        </div> 
+        <div v-for="(list,index) in lists">
+            <div>单号: {{list.fso}} 机型: {{list.machine}} 姓名: {{list.name}} 电话: {{list.phone}} 邮箱: {{list.email}} 城市: {{list.city}} 地址: {{list.address}}<button @click="del(list.fso)">删除</button></div>
+        </div>
+    </div>
+    <script>
+        Vue.createApp({
+            data(){
+                return {
+                    lists: [],
+                    fso: "",
+                    fso1: "",
+                    machine: "",
+                    name: "",
+                    phone: "",
+                    email: "",
+                    city: "",
+                    address: ""
+                }
+            },
+            created() {
+                this.load()
+            },
+            methods: {
+                load(){
+                    axios.get('/person').then(res=>{
+                        if(res.data.person=="no"){
+                            console.log(res.data.person)
+                            this.lists=[]
+                        }else{
+                            console.log(res.data.person)
+                            this.lists=res.data.person
+                            this.fso1=""
+                            this.fso=""
+                            this.machine=""
+                            this.name=""
+                            this.phone=""
+                            this.email=""
+                            this.city=""
+                            this.address=""
+                        }
+                    })
+                },
+                add(){
+                    if(this.fso=="" || this.fso.length!=7){
+                        alert("input not empty or fso number != 7")
+                        this.fso=""
+                        this.machine=""
+                        this.name=""
+                        this.phone=""
+                        this.email=""
+                        this.city=""
+                        this.address=""
+                    }else{
+                        axios.post('/person',{
+                            fso: this.fso,
+                            machine: this.machine,
+                            name: this.name,
+                            phone: this.phone,
+                            email: this.email,
+                            city: this.city,
+                            address: this.address
+                        }).then(res=>{
+                            this.load()
+                        })
+                    }  
+                },
+                update(){
+                    if(this.fso=="" || this.fso.length!=7){
+                        alert("input is empty or fso number != 7")
+                        this.fso=""
+                        this.machine=""
+                        this.name=""
+                        this.phone=""
+                        this.email=""
+                        this.city=""
+                        this.address=""
+                    }else{
+                        axios.put('/person/'+this.fso,{
+                            fso: this.fso,
+                            machine: this.machine,
+                            name: this.name,
+                            phone: this.phone,
+                            email: this.email,
+                            city: this.city,
+                            address: this.address
+                        }).then(res=>{
+                            alert(res.data.message)
+                            this.load()
+                        })
+                    }  
+                },
+                del(fso){
+                    axios.delete("/person/"+fso).then(res=>{
+                        this.load()
+                    })
+                },
+                search(fso){
+                    if(fso==""){
+                        alert("input is empty")
+                        this.fso1=""
+                    }else{
+                        axios.get("/person/"+fso).then(res=>{
+                            if(res.data.person.length==0){
+                                alert("not found fso number")
+                                this.fso1=""
+                            }else{
+                                console.log(res.data.person)
+                                this.lists=res.data.person
+                                this.fso1=""
+                            }
+                        })
+                    }   
+                },
+                modify(fso){
+                    if(fso==""){
+                        alert("input is empty")
+                        this.fso1=""
+                    }else{
+                        axios.get("/person/"+fso).then(res=>{
+                            if(res.data.person.length==0){
+                                alert("not found fso number")
+                                this.fso1=""
+                            }else{
+                                console.log(res.data.person)
+                                //this.lists=res.data.person
+                                this.fso1=""
+                                this.fso=fso
+                                this.machine=res.data.person[0].machine
+                                this.name=res.data.person[0].name
+                                this.phone=res.data.person[0].phone
+                                this.email=res.data.person[0].email
+                                this.city=res.data.person[0].city
+                                this.address=res.data.person[0].address
+                            }
+                        })
+                    }   
+                }
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>
