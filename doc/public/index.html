@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>documents</title>
+    <script src="vue3.js"></script>
+    <script src="axios.js"></script>
+    <style>
+        .box{
+            display: flex;
+        }
+        .inbox{
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div>
+                <input  class="inbox" type="text" v-model="name" placeholder="name">
+                <br>
+                <textarea cols="30" rows="10" v-model="content" placeholder="pls input doc content"></textarea>
+                <button @click="add">添加信息</button>
+                <button @click="update">更新信息</button>
+            </div>
+            <div>
+                <input  class="inbox" type="text" v-model="name1" placeholder="name">
+                <button @click="search(name1)">查询信息</button>
+                <button @click="modify(name1)">修改信息</button>
+                <button @click="load">重置</button>
+            </div>
+        </div> 
+        <div v-for="(list,index) in lists">
+            <div>文档名称: {{list.name}} <button @click="view(list.name)">view</button><button @click="del(list.name)">delete</button></div>
+        </div>
+        <p v-html="content1"></p>
+    </div>
+    <script>
+        Vue.createApp({
+            data(){
+                return {
+                    lists: [],
+                    name: "",
+                    name1: "",
+                    content: "",
+                    content1: ""
+                }
+            },
+            created() {
+                this.load()
+            },
+            methods: {
+                load(){
+                    axios.get('/doc').then(res=>{
+                        if(res.data.person=="no"){
+                            this.lists=[]
+                        }else{
+                            this.lists=res.data.docs
+                            this.name=""
+                            this.name1=""
+                            this.content=""
+                            this.content1=""
+                        }
+                    })
+                },
+                view(name){
+                    axios.get("/content/"+name).then(res=>{
+                        this.content1=res.data.doc
+                    })  
+                },
+                add(){
+                    if(this.name=="" || this.content==""){
+                        alert("all fields not empty")
+                        this.name=""
+                        this.content=""
+                    }else{
+                        axios.post('/doc',{
+                            name: this.name,
+                            content: this.content
+                        }).then(res=>{
+                            this.load()
+                        })
+                    }  
+                },
+                update(){
+                    if(this.name=="" || this.content==""){
+                        alert("all fields not empty")
+                        this.name=""
+                        this.content=""
+                    }else{
+                        axios.put('/doc/'+this.name,{
+                            name: this.name,
+                            content: this.content
+                        }).then(res=>{
+                            alert(res.data.message)
+                            this.load()
+                        })
+                    }  
+                },
+                del(name){
+                    axios.delete("/doc/"+name).then(res=>{
+                        this.load()
+                    })
+                },
+                search(name){
+                    if(name==""){
+                        alert("input is empty")
+                        this.name1=""
+                    }else{
+                        axios.get("/doc/"+name).then(res=>{
+                            if(res.data.docs.length==0){
+                                alert("not found this doc")
+                                this.name1=""
+                            }else{
+                                console.log(res.data.docs)
+                                this.lists=res.data.docs
+                                this.name1=""
+                            }
+                        })
+                    }   
+                },
+                modify(name){
+                    if(name==""){
+                        alert("input is empty")
+                        this.name1=""
+                    }else{
+                        axios.get("/doc/"+name).then(res=>{
+                            if(res.data.docs.length==0){
+                                alert("not found this doc")
+                                this.name1=""
+                            }else{
+                                console.log(res.data.docs)
+                                this.name1=""
+                                this.name=res.data.docs[0].name
+                                this.content=res.data.docs[0].content
+                            }
+                        })
+                    }   
+                }
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>
