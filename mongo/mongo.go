@@ -2,15 +2,19 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
 
+	_ "github.com/mattn/go-sqlite3"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
+
+var DB *sql.DB
 
 type doc struct {
 	Name    string `json:"name"`
@@ -19,6 +23,9 @@ type doc struct {
 }
 
 func main() {
+	err := connectDatabase()
+	checkErr(err)
+
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
 	if err != nil {
 		log.Fatal(err)
@@ -59,10 +66,60 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s\n", result.Name)
+		// fmt.Printf("%s\n", result.Name)
+		addDoc(result)
 	}
 
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func connectDatabase() error {
+	db, err := sql.Open("sqlite3", "./doc.db")
+	if err != nil {
+		return err
+	}
+
+	doc := `CREATE TABLE IF NOT EXISTS doc ( name text, type text, content text);`
+
+	_, err = db.Exec(doc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	DB = db
+	return nil
+}
+
+func addDoc(newDoc doc) (bool, error) {
+
+	tx, err := DB.Begin()
+	if err != nil {
+		return false, err
+	}
+
+	stmt, err := tx.Prepare("INSERT INTO doc (name,type,content) VALUES (?,?,?)")
+
+	if err != nil {
+		return false, err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(newDoc.Name, newDoc.Type, newDoc.Content)
+
+	if err != nil {
+		return false, err
+	}
+
+	tx.Commit()
+
+	return true, nil
 }
