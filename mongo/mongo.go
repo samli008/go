@@ -16,6 +16,8 @@ import (
 
 var DB *sql.DB
 
+// var db *mongo.Database
+
 type doc struct {
 	Name    string `json:"name"`
 	Type    string `json:"type"`
@@ -30,7 +32,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -47,13 +49,33 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(databases)
+
+	var db string
+	fmt.Printf("current mongodb databases: %s\n", databases)
+	fmt.Println("pls input export mongodb database name: ")
+	fmt.Scanln(&db)
+
+	collections, err := client.Database(db).ListCollectionNames(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var col string
+	fmt.Printf("%s database collections: %s\n", db, collections)
+	fmt.Printf("pls input collection in %s database: ", db)
+	fmt.Scanln(&col)
 
 	//print document where type is linux.
-	collection := client.Database("login").Collection("docs")
+	collection := client.Database(db).Collection(col)
 	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
 
-	cur, err := collection.Find(ctx, bson.M{"type": "linux"})
+	docTypes, _ := collection.Distinct(ctx, "type", bson.M{})
+	var docType string
+	fmt.Printf("%s types: %s\n", col, docTypes)
+	fmt.Printf("pls input export %s type: ", col)
+	fmt.Scanln(&docType)
+
+	cur, err := collection.Find(ctx, bson.M{"type": docType})
 	if err != nil {
 		log.Fatal("find:" + err.Error())
 	}
