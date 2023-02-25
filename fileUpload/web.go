@@ -27,6 +27,7 @@ func main() {
 	})
 
 	r.POST("/up", upload)
+	r.POST("/multiUp", multiUpload)
 	r.Run(":80")
 }
 
@@ -41,9 +42,22 @@ func upload(c *gin.Context) {
 
 	log.Println(file.Filename)
 	dst := fmt.Sprintf("./files/%s", file.Filename)
-	// 上传文件到指定的目录
 	c.SaveUploadedFile(file, dst)
 	c.JSON(http.StatusOK, gin.H{
 		"message": fmt.Sprintf("'%s' uploaded!", file.Filename),
+	})
+}
+
+func multiUpload(c *gin.Context) {
+	form, _ := c.MultipartForm()
+	files := form.File["f2"]
+
+	for _, file := range files {
+		log.Println(file.Filename)
+		dst := fmt.Sprintf("./files/%s", file.Filename)
+		c.SaveUploadedFile(file, dst)
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": fmt.Sprintf("%d files uploaded!", len(files)),
 	})
 }
