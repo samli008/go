@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -57,7 +58,20 @@ func multiUpload(c *gin.Context) {
 		dst := fmt.Sprintf("./files/%s", file.Filename)
 		c.SaveUploadedFile(file, dst)
 	}
+	list("./files")
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": fmt.Sprintf("%d files uploaded!", len(files)),
 	})
+}
+
+func list(path string) {
+	fileInfos, err := ioutil.ReadDir(path)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for _, info := range fileInfos {
+		fmt.Println(info.Name())
+	}
 }
