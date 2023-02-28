@@ -23,10 +23,9 @@
           </el-header> -->
           
           <el-main>
-              <!-- <keep-alive include="labPage">
-                  <router-view :key="$route.fullPath"></router-view>
-              </keep-alive> -->
-              <router-view></router-view>
+              <keep-alive include="linuxPage,dellPage,netappPage,vmwarePage,windowsPage,privatePage">
+                  <router-view></router-view>
+              </keep-alive>
           </el-main>
       </el-container>
     </el-container>

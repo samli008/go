@@ -43,7 +43,7 @@
 </template>
 <script>
 export default {
-    name: 'labPage',
+    name: 'vmwarePage',
     data(){
         return {
             labs: [],
