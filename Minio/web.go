@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"fileUpload/model"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -46,13 +45,13 @@ func list(c *gin.Context) {
 func down(c *gin.Context) {
 	name := c.Param("id")
 	model.DownOb(bk, name)
-	c.File("files/" + name)
+	c.File(name)
 }
 
 func del(c *gin.Context) {
 	if strings.Contains(c.Request.URL.Path, "code") {
 		name := c.Param("id")
-		err := model.DeleteOb("bk", "code/"+name)
+		err := model.DeleteOb(bk, "code/"+name)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{"message": err})
 		} else {
@@ -60,7 +59,6 @@ func del(c *gin.Context) {
 		}
 	} else {
 		name := c.Param("id")
-		fmt.Println(name)
 		err := model.DeleteOb(bk, name)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{"message": err})
@@ -75,9 +73,7 @@ func upload(c *gin.Context) {
 	files := form.File["f1"]
 
 	for _, file := range files {
-		fmt.Println(file.Filename)
-		model.UpOb("sam", file.Filename, file, "")
+		model.UpOb(bk, file.Filename, file, "")
 	}
-	objects := model.ListOb(bk)
-	c.JSON(http.StatusOK, gin.H{"objects": objects})
+	c.Redirect(http.StatusMovedPermanently, "/public")
 }
