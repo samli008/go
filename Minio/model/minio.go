@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	end    = "samli007.f3322.net:9000"
+	end    = "xxx:9000"
 	id     = "admin"
-	Secret = "liyang@1979"
+	Secret = "liyang@008"
 	ssl    = false
 )
 

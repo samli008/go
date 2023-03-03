@@ -14,8 +14,8 @@ func handleError(err error) {
 }
 
 var end = "oss-cn-chengdu.aliyuncs.com"
-var id = "LTAI5tAYEnLLsapWhEKdAUeH"
-var Secret = "6McLsMtl1MdTAay9KfJibq9mQ0g0ZK"
+var id = "xxxxx"
+var Secret = "xxxxx"
 
 type ob struct {
 	Name string `json:"name"`
