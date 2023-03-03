@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fileUpload</title>
+    <script src="vue3.js"></script>
+    <script src="axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <form action="/up" method="post" enctype="multipart/form-data">
+            <input type="file" name="f1">
+            <input type="submit" value="上传">
+        </form>
+        <form action="/multiUp" method="post" enctype="multipart/form-data">
+            <input type="file" name="f2" multiple="multiple">
+            <input type="submit" value="多文件上传">
+        </form>
+        <div style="text-align: left;">
+            <ul class="content">
+                <li>OSS objects list</li>
+                <hr>
+                <li v-for="(list,index) in lists">
+                    {{list.name}} {{list.size}} <button @click="del(list.name)">delete</button><button @click="down(list.name)">download</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    lists: [],
+                }
+            },
+            created() {
+                axios.get('/list').then(res => {
+                    this.lists = res.data.objects
+                })
+            },
+            methods: {
+                load() {
+                    axios.get('/list').then(res => {
+                        this.lists = res.data.objects
+                    })
+                },
+                down(id) {
+                    axios.get('/down/' + id, {
+                        responseType: 'blob',
+                    }).then(res => {
+                        var fileURL = window.URL.createObjectURL(new Blob([res.data]));
+                        var fURL = document.createElement('a');
+                        fURL.href = fileURL;
+                        fURL.setAttribute('download', id);
+                        document.body.appendChild(fURL);
+
+                        fURL.click();
+                    })
+                },
+                del(id) {
+                    axios.delete("/del/" + id).then(res => {
+                        console.log(id)
+                        alert(res.data.message)
+                        this.load()
+                    })
+                },
+                create() {
+                    axios.get('/list').then(res => {
+                        this.lists = res.data.objects
+                    })
+                },
+            }
+        }).mount("#app")
+    </script>
+</body>
+
+</html>
