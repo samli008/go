@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatGPT</title>
+    <script src="vue3.js"></script>
+    <script src="axios.js"></script>
+    <style>
+         #app {
+            width: 800px;
+            height: 500px;
+            background: #0099cc;
+            border-radius: 10px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .input2{
+            line-height:100px;
+			text-align: center;
+        }
+        .box{
+            display: flex;
+            line-height:100px;
+			text-align: center;
+            vertical-align: middel;
+        }
+        .inbox{
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <input  class="inbox" type="text" style="width:280px; height:20px;" v-model="question" placeholder="question for chatGPT">
+            <button @click="search(question)">chatGPT Go!</button>
+            <button @click="load()">reset</button>
+        </div>
+        <hr>
+        <div>
+            {{answer}}
+        </div>
+    </div>
+    <script>
+        Vue.createApp({
+            data(){
+                return {
+                    question: "",
+                    answer: ""
+                }
+            },
+            created() {
+                this.load()
+            },
+            methods: {
+                search(id){
+                    axios.post('/gpt/'+id,).then(res=>{
+                        this.answer=res.data.chat
+                    })
+                },
+                load(){
+                    this.question= ""
+                    this.answer= ""
+                }
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>
