@@ -25,11 +25,12 @@ func main() {
 	})
 
 	r.POST("/gpt/:id", gpt)
-	r.Run(":8080")
+	r.Run(":8181")
 }
 
 func gpt(c *gin.Context){
 	question := c.Param("id")
 	answer := models.Gpt(question)
+	models.Wf("gpt.log",question)
 	c.JSON(http.StatusOK, gin.H{"chat": answer})
 }

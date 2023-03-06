@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" /> 
+
     <title>chatGPT</title>
     <script src="vue3.js"></script>
     <script src="axios.js"></script>
     <style>
-         #app {
-            width: 800px;
-            height: 500px;
-            background: #0099cc;
-            border-radius: 10px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);
-            padding: 20px;
-            box-sizing: border-box;
+        @media screen and (min-width:600px) and (max-width:900px){
+            .dis{
+                width: 800px;
+                height: 500px;
+                background: #0099cc;
+                border-radius: 10px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
+                padding: 20px;
+                box-sizing: border-box;
+            }
         }
         .input2{
             line-height:100px;
@@ -37,14 +40,16 @@
 </head>
 <body>
     <div id="app">
-        <div class="box">
-            <input  class="inbox" type="text" style="width:280px; height:20px;" v-model="question" placeholder="question for chatGPT">
-            <button @click="search(question)">chatGPT Go!</button>
-            <button @click="load()">reset</button>
-        </div>
-        <hr>
-        <div>
-            {{answer}}
+        <div class="dis">
+            <div class="box">
+                <input  class="inbox" type="text" style="width:280px; height:20px;" v-model="question" placeholder="question for chatGPT">
+                <button @click="search(question)">chatGPT Go!</button>
+                <button @click="load()">reset</button>
+            </div>
+            <hr>
+            <div>
+                <p v-html="answer"></p>
+            </div>
         </div>
     </div>
     <script>

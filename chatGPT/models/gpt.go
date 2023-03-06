@@ -2,12 +2,14 @@ package models
 
 import (
 	"log"
+	"fmt"
+	"os"
 	"time"
 	"github.com/chatgp/gpt3"
 )
 
 func Gpt(question string) string {
-	apiKey := "sk-xxx"
+	apiKey := "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"
 
 	// new gpt-3 client
 	cli, _ := gpt3.NewClient(&gpt3.Options{
@@ -33,5 +35,16 @@ func Gpt(question string) string {
 	// fmt.Printf("chatGPT answer your question: %s\n", res.Get("choices.0.message.content").String())
 	answer := res.Get("choices.0.message.content").String()
 	return answer
+}
+
+func Wf(filename string, data string) {
+	file, err := os.OpenFile(filename, os.O_CREATE | os.O_APPEND | os.O_WRONLY, 0200)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	content:=fmt.Sprintf("%s%c",data,'\n')
+	file.WriteString(content)
+	file.Close()
 }
 
