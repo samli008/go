@@ -16,5 +16,5 @@ EOF
 
 systemctl daemon-reload
 systemctl enable --now gpt
-systemctl status doc
+systemctl status gpt
 ss -nlpt |grep 8181
