@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"os"
 	"time"
+	"strings"
+	"io/ioutil"
 	"github.com/chatgp/gpt3"
 )
 
-func Gpt(question string) string {
-	apiKey := "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"
+func Gpt(question string, key string) string {
+	apiKey := key
 
 	// new gpt-3 client
 	cli, _ := gpt3.NewClient(&gpt3.Options{
@@ -46,5 +48,23 @@ func Wf(filename string, data string) {
 	content:=fmt.Sprintf("%s%c",data,'\n')
 	file.WriteString(content)
 	file.Close()
+}
+
+func Rf(path string) string {
+	fileHanle, err := os.OpenFile(path, os.O_RDONLY, 0666)
+	if err != nil {
+		panic(err)
+	}
+
+	defer fileHanle.Close()
+
+	readBytes, err := ioutil.ReadAll(fileHanle)
+	if err != nil {
+		panic(err)
+	}
+
+	results := strings.Split(string(readBytes), "\n")
+	key := results[0]
+	return key
 }
 

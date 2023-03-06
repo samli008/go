@@ -5,7 +5,6 @@ import (
 	"embed"
 	"liyang/models"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,7 +29,8 @@ func main() {
 
 func gpt(c *gin.Context){
 	question := c.Param("id")
-	answer := models.Gpt(question)
+	apiKey:= models.Rf("api.key")
+	answer := models.Gpt(question,apiKey)
 	models.Wf("gpt.log",question)
 	c.JSON(http.StatusOK, gin.H{"chat": answer})
 }
