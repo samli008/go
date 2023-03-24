@@ -71,14 +71,14 @@ func wf(filename string, data string) {
 }
 
 func rf(path string) string {
-	fileHanle, err := os.OpenFile(path, os.O_RDONLY, 0666)
+	file, err := os.OpenFile(path, os.O_RDONLY, 0666)
 	if err != nil {
 		panic(err)
 	}
 
-	defer fileHanle.Close()
+	defer file.Close()
 
-	readBytes, err := ioutil.ReadAll(fileHanle)
+	readBytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		panic(err)
 	}
