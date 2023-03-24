@@ -18,14 +18,14 @@ func main() {
 		addr string
 	)
 	
+	fmt.Print("pls input ip addr: ")
+	fmt.Scan(&addr)
+
 	fmt.Print("pls input username: ")
 	fmt.Scan(&username)
 
 	fmt.Print("pls input passwd: ")
 	fmt.Scan(&password)
-
-	fmt.Print("pls input ip addr: ")
-	fmt.Scan(&addr)
 
 	addr =fmt.Sprintf("%s%s",addr,":22")
 
@@ -36,30 +36,12 @@ func main() {
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
+
 	client, err := ssh.Dial("tcp", addr, config)
 	if err != nil {
 		log.Fatal("Failed to dial: ", err)
 	}
 	defer client.Close()
-
-	// 开启一个session，用于执行一个命令
-	
-
-	// 执行命令，并将执行的结果写到 b 中
-	// var b bytes.Buffer
-	// session.Stdout = &b
-  
-	cli := rf("cli")
-	fmt.Println(cli)
-	var cli2 string
-	for _,v := range cli {
-		cli2 = cli2 + v
-	}
-	fmt.Println(cli2)
-	// if err := session.Run(cli); err != nil {
-	// 	log.Fatal("Failed to run: " + err.Error())
-	// }
-	// fmt.Println(b.String())
 
 	session, err := client.NewSession()
 	if err != nil {
@@ -67,12 +49,14 @@ func main() {
 	}
 	defer session.Close()
 	
-	res, err := session.CombinedOutput(cli2)
+	cli := rf("cli.txt")
+
+	res, err := session.CombinedOutput(cli)
 	if err != nil {
 		log.Fatal("Failed to run: " + err.Error())
 	}
 
-	wf("u.log",string(res))
+	wf("ssh.log",string(res))
 }
 
 func wf(filename string, data string) {
@@ -86,7 +70,7 @@ func wf(filename string, data string) {
 	file.Close()
 }
 
-func rf(path string) []string {
+func rf(path string) string {
 	fileHanle, err := os.OpenFile(path, os.O_RDONLY, 0666)
 	if err != nil {
 		panic(err)
@@ -99,7 +83,6 @@ func rf(path string) []string {
 		panic(err)
 	}
 
-	results := strings.Split(string(readBytes), "\n")
-	//res := string(readBytes)
-	return results
+	res := strings.ReplaceAll(string(readBytes), "\n","")
+	return res
 }
