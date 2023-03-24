@@ -40,20 +40,22 @@ func main() {
 		log.Fatal("Failed to dial: ", err)
 	}
 	defer client.Close()
-	cli := rf("cli.txt")
-	fmt.Println(cli)
+	
 	session, err := client.NewSession()
 	if err != nil {
 		log.Fatal("Failed to create session: ", err)
 	}
 	defer session.Close()
 
+	cli := rf("cli.txt")
+	
 	res, err := session.CombinedOutput(cli)
 	if err != nil {
 		log.Fatal("Failed to run: " + err.Error())
 	}
 
 	wf("ssh.log", string(res))
+	fmt.Println("log output filename: ssh.log")
 }
 
 func wf(filename string, data string) {

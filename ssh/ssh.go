@@ -56,6 +56,7 @@ func main() {
 	}
 
 	wf("ssh.log",string(res))
+	fmt.Println("log output filename: ssh.log")
 }
 
 func wf(filename string, data string) {
