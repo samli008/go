@@ -1,0 +1,2 @@
+192.168.20.18 root liyang
+192.168.20.19 root liyang

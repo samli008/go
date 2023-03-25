@@ -1,3 +1,2 @@
-node show;
-cluster show;
-net int show;
+df -h;
+uname -r;
