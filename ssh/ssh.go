@@ -83,6 +83,6 @@ func rf(path string) string {
 		panic(err)
 	}
 
-	res := strings.ReplaceAll(string(readBytes), "\n","")
+	res := strings.ReplaceAll(string(readBytes), "\n",";")
 	return res
 }
